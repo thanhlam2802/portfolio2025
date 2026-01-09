@@ -1,0 +1,17 @@
+{
+    "name": "volethanhlam/portfolio",
+    "description": "Portfolio project in pure PHP MVC",
+    "type": "project",
+    "autoload": {
+        "psr-4": {
+            "App\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Võ Lê Thanh Lâm",
+            "email": "baolethanhlam2001@gmail.com"
+        }
+    ],
+    "require": {}
+}

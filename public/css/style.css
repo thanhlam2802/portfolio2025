@@ -1,0 +1,587 @@
+/* --- 1. Khai báo Font --- */
+@font-face {
+    font-family: 'HelveticaNow Light';
+    src: url('../fonts/SVN-HelveticaNowDisplay-Light.ttf') format('truetype');
+    font-weight: 300;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'HelveticaNow Medium';
+    src: url('../fonts/SVN-HelveticaNowDisplay-Medium.ttf') format('truetype');
+    font-weight: 500;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'HelveticaNow black';
+    src: url('../fonts/SVN-HelveticaNowDisplay-Black.ttf') format('truetype');
+    font-weight: 900;
+    font-style: normal;
+}
+
+
+.split-line {
+    overflow: hidden; 
+    display: block;
+}
+
+.split-word {
+    display: inline-block;
+    white-space: nowrap;
+}
+
+.split-inner {
+    display: inline-block;
+    opacity: 0;
+    transform: translateY(105%); 
+    will-change: transform, opacity;
+}
+
+
+.grid-container {
+    display: grid;
+    visibility: hidden; 
+}
+.nav-links, .home-footer-name {
+    opacity: 0;
+    transform: translateY(30px); 
+    will-change: transform, opacity;
+}
+
+/* --- 2. Cấu hình chung --- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: #ffffff; 
+    color: #000000;
+    overflow: hidden;
+    cursor: none;
+    
+}
+body.loaded {
+    overflow: auto !important;
+}
+.loader-wrapper {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000;
+    overflow: hidden;
+    cursor: none;
+}
+
+.loader-counter {
+    position: fixed;
+    top: 0; left: 0;
+    font-family: 'HelveticaNow light', sans-serif;
+    font-size: 12rem; 
+    color: #000;
+    z-index: 10005;
+    pointer-events: none;
+    
+    /* Căn giữa chính xác */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    line-height: 1;
+
+    /* Khử mờ Safari */
+    will-change: transform;
+    -webkit-font-smoothing: antialiased;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    transform: translate(-50%, -50%) scale(0.25); 
+}
+
+/* Trong style.css */
+.loader-bg-top, .loader-bg-bottom {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 50.5vh;
+    background: #000;
+    z-index: 10001;
+    /* Bắt đầu thu nhỏ về tâm */
+    transform: scale(0); 
+}
+
+.loader-bg-top { top: 0; transform-origin: bottom center; }
+.loader-bg-bottom { bottom: 0; transform-origin: top center; }
+
+
+.nav-links, 
+.description-left, 
+.description-right {
+    opacity: 0;
+    transform: translateY(60px);
+    will-change: transform, opacity;
+}
+
+.grid-container, .logo-container { visibility: hidden; }
+.logo-container {
+    position: fixed;
+    top: 20px;   
+    left: 60px;    
+    width: 32px;   
+    height: 32px;
+    z-index: 9999;
+    cursor: pointer;
+    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.logo-container:hover {
+    transform: rotate(90deg); 
+}
+
+.logo-container svg {
+    width: 100%;
+    height: 100%;
+    color: #000; /* Dễ dàng đổi màu logo tại đây */
+}
+
+/* Ẩn logo khi vào trang Contact nền đen (nếu cần) */
+body.show-contact .logo-container svg {
+    color: #fff;
+}
+
+.grid-container {
+    display: grid;
+    height: 100vh;
+    padding: 20px 60px;
+    gap: 20px;
+    grid-template-columns: repeat(12, 1fr);
+    grid-template-rows: repeat(12, 1fr);
+}
+
+
+.nav-links {
+    grid-row: 1 / span 4;
+    grid-column: 1 / span 12;
+    display: flex; 
+    justify-content: space-between;
+    align-items: baseline;
+    align-self: end;
+    width: 100%;
+    z-index: 100;
+    opacity: 1 !important; 
+    transform: none !important; 
+    overflow: visible;
+}
+
+.nav-item {
+    display: inline-block !important; 
+    vertical-align: bottom;
+    text-decoration: none;
+    color: inherit;
+    font-size: calc(18vw / 4.5); 
+    line-height: 0.8;
+    font-family: 'HelveticaNow Medium';
+    will-change: font-size, letter-spacing;
+    transition: color 0.3s ease;
+    transform-origin: left bottom;
+}
+
+
+.nav-item.home {
+    font-size: 15vw;
+    letter-spacing: -0.05em;
+    color: #000;
+}
+
+.nav-item.clicked {
+    letter-spacing: -0.05em;
+}
+
+/* Số đếm (Count) cho Work */
+.count {
+    display: none;
+    position: absolute;
+    top: -0.1em;
+    right: -0.5em;
+    font-size: 0.3em;
+    font-family: 'HelveticaNow Light';
+}
+.clicked .count { display: block; }
+
+/* --- 4. Quản lý nội dung các trang --- */
+.page-content {
+    display: none; /* Mặc định ẩn */
+    grid-row: 6 / span 7;
+    grid-column: 1 / span 12;
+}
+body:not(.active-page) .home-content {
+    display: grid !important; 
+}
+/* HIỂN THỊ TRANG CHỦ (Home Content) */
+body:not(.active-page) .home-content {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    grid-template-rows: repeat(8, 1fr);
+    gap: 20px;
+}
+
+.description-left {
+    grid-row: 1 / span 2;
+    grid-column: 1 / span 4;
+    font-family: 'HelveticaNow Light';
+    font-size: 3rem;
+    line-height: 1.1;
+}
+
+.description-right {
+    grid-row: 1 / span 2;
+    grid-column: 7 / span 5;
+    font-family: 'HelveticaNow Light';
+    font-size: 1.5rem;
+    line-height: 1.4;
+}
+
+/* Thanh Lâm SVG nằm trong Home Content */
+.home-footer-name {
+    grid-row: 6 / span 3;
+    grid-column: 1 / span 12;
+    display: flex;
+    align-items: flex-end;
+    overflow: hidden; 
+    opacity: 1; 
+    transform: none; 
+    height: 100%;
+    min-height: 250px;
+    
+}
+
+.home-footer-name svg { width: 100%; height: auto;overflow: visible; }
+
+
+.footer-letter {
+   
+    opacity: 0;
+    transform: translateY(100px); 
+    will-change: transform, opacity;
+}
+
+
+body.show-work .work-content { display: block; }
+body.show-about .about-content { display: block; }
+body.show-contact .contact-content { display: block; }
+
+
+.work-content {
+    display: none;
+    grid-row: 7 / span 6;
+    grid-column: 1 / span 12;
+    height: 100%;
+    pointer-events: auto;
+}
+
+.work-grid {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    gap: 0; 
+    align-items: center; 
+    justify-content: space-between;
+}
+
+/* --- TRANG WORK - CHIA ĐỀU 3 KHỐI BÊN TRÁI --- */
+
+.left-content-wrapper {
+    flex: 0 0 50%; 
+    display: flex;
+    flex-direction: row; 
+    justify-content: space-between; 
+    align-items: stretch;
+    max-width: 50%;
+    padding-right: 40px; 
+    box-sizing: border-box;
+}
+
+
+.work-id {
+  
+    flex: 0 0 10vw; 
+    width: 10vw;
+    
+    font-size: 8vw;
+    font-family: 'HelveticaNow Light';
+    line-height: 0.8;
+    overflow: hidden;
+    font-variant-numeric: tabular-nums;
+    text-align: left;
+    
+    padding: 0;
+    margin: 0;
+    
+}
+
+
+.left-content-wrapper {
+    flex: 0 0 50%; 
+    display: flex;
+    flex-direction: row; 
+    justify-content: space-between; 
+    align-items: stretch;
+    height: 100%;
+    box-sizing: border-box;
+}
+
+#left-scroll-area {
+    
+    flex: 0 0 30%; 
+    height: 100%;
+ 
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+    overflow-y: auto; 
+    scrollbar-width: none;
+    pointer-events: auto;
+    
+  
+}
+#left-scroll-area::-webkit-scrollbar { display: none; }
+.project-group {
+    display: flex;
+    flex-direction: column;
+    gap: 40px; 
+    margin-bottom: 80px; 
+}
+
+
+.step-box {
+    width: 100%;
+    aspect-ratio: 7 / 4; 
+    overflow: hidden;
+    background: #111;
+    flex-shrink: 0;
+}
+.work-info {
+    
+    flex: 0 0 40%; 
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+  
+}
+
+.work-info h3 {
+    font-size: 1.4rem;
+    font-family: 'HelveticaNow Medium';
+    margin-bottom: 8px;
+    overflow: hidden;
+}
+
+.work-info p {
+    font-size: 0.95rem;
+    line-height: 1.4;
+    font-family: 'HelveticaNow Light';
+    overflow: hidden;
+}
+
+
+
+/* ============================================================
+   BÊN PHẢI: right-viewer (Chiếm 50% - 6 cột)
+   ============================================================ */
+   #right-viewer {
+    flex: 0 0 50%; 
+    max-width: 50%; 
+    position: relative;
+    overflow: hidden;
+    aspect-ratio: 7 / 4; 
+    margin-left: auto; 
+    
+    background-color: #000;
+}
+
+.step-box {
+    width: 100%;
+    aspect-ratio: 7 / 4; 
+    overflow: hidden;
+    background: #111;
+    flex-shrink: 0;
+}
+
+.step-box img, 
+.step-box video, 
+.viewer-layer {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; 
+    display: block;
+}
+
+.viewer-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.step-box img, .step-box video {
+    opacity: 0.3;
+    transition: opacity 0.4s ease;
+}
+.step-box.is-active img, .step-box.is-active video {
+    opacity: 1;
+}
+
+body.show-contact .contact-content { 
+    display: grid !important; 
+}
+
+.contact-content {
+    background: #000;
+    grid-row: 6 / span 7; 
+    grid-template-rows: repeat(7, 1fr); 
+}
+
+.contact-hero {
+    grid-row: 1 / span 4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 12%;
+    text-align: center;
+    color: #fff;
+}
+
+.contact-hero p { 
+    font-size: 2.5rem;
+     font-family: 'HelveticaNow Medium';
+      line-height: 1.1; 
+      visibility: hidden; 
+    opacity: 0;
+}
+
+.contact-details {
+    grid-row: 7; 
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end; 
+    padding: 0 20px 10px 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.3); 
+    color: #fff;
+    font-family: 'HelveticaNow Medium';
+    font-size: 0.9rem;
+    overflow: hidden;
+}
+
+
+
+.about-content {
+    display: none;
+    grid-row: 1 / span 12; 
+    grid-column: 1 / span 12;
+    height: 100%;
+}
+
+.about-grid {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    grid-template-rows: repeat(12, 1fr);
+    height: 100%;
+    gap: 20px;
+}
+
+
+.about-item-dev {
+    grid-column: 1 / span 6;
+    grid-row: 7 / span 2;
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    align-items: start;
+}
+
+/* Cụm Design: Hàng 10-12 */
+.about-item-des {
+    grid-column: 1 / span 6;
+    grid-row: 10 / span 2;
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    align-items: start;
+}
+
+
+.about-label {
+    grid-column: span 3;
+    font-size: 1.5rem;
+    font-family: 'HelveticaNow Medium';
+    text-transform: lowercase;
+    line-height: 1;
+}
+
+.about-grid p:not(.about-label) {
+    grid-column: span 3;
+    font-size: 1rem;
+    line-height: 1.4;
+    font-family: 'HelveticaNow Light';
+}
+
+
+.about-center {
+    grid-column: 8 / span 4; 
+    grid-row: 6 / span 6;  
+    z-index: 1;
+}
+
+.image-wrapper {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+.profile-placeholder {
+    width: 100%;
+    height: 100%;
+    background: #ccc;
+    transform: rotate(-8deg); 
+    overflow: hidden;
+}
+
+.profile-placeholder img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+
+.story-text {
+    position: absolute;
+    grid-column: 11 / span 4;
+    grid-row: 5 / span 6;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    
+    left: 40%; 
+    top: 50%;
+    transform: translateY(-50%);
+    
+    font-size: 10vw;
+    line-height: 0.8;
+    font-family: 'HelveticaNow  Medium';
+    text-transform: lowercase;
+   
+    z-index: 5;
+    pointer-events: none;
+    white-space: nowrap;
+    color: #fff; 
+    mix-blend-mode: difference;
+}
+/* --- 6. Hiệu ứng --- */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
