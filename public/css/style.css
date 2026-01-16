@@ -274,7 +274,7 @@ body.show-contact .contact-content { display: block; }
 
 .work-content {
     display: none;
-    grid-row: 7 / span 6;
+    grid-row: 5 / span 8;
     grid-column: 1 / span 12;
     height: 100%;
     pointer-events: auto;
@@ -285,7 +285,7 @@ body.show-contact .contact-content { display: block; }
     width: 100%;
     height: 100%;
     gap: 0; 
-    align-items: center; 
+    align-items: flex-start;
     justify-content: space-between;
 }
 
@@ -356,9 +356,8 @@ body.show-contact .contact-content { display: block; }
 
 .step-box {
     width: 100%;
-    aspect-ratio: 7 / 4; 
+   
     overflow: hidden;
-    background: #111;
     flex-shrink: 0;
 }
 .work-info {
@@ -394,15 +393,17 @@ body.show-contact .contact-content { display: block; }
     max-width: 50%; 
     position: relative;
     overflow: hidden;
-    aspect-ratio: 7 / 4; 
+    aspect-ratio: 700 / 520; 
     margin-left: auto; 
-    
     background-color: #000;
+    margin-bottom: 20px;
+    bottom: auto;
+
 }
 
 .step-box {
+    aspect-ratio: 700 / 520; 
     width: 100%;
-    aspect-ratio: 7 / 4; 
     overflow: hidden;
     background: #111;
     flex-shrink: 0;
@@ -425,14 +426,15 @@ body.show-contact .contact-content { display: block; }
     height: 100%;
     object-fit: cover;
     display: block;
+    
 }
 
 .step-box img, .step-box video {
-    opacity: 0.3;
+  
     transition: opacity 0.4s ease;
 }
 .step-box.is-active img, .step-box.is-active video {
-    opacity: 1;
+  
 }
 
 body.show-contact .contact-content { 

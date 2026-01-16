@@ -112,24 +112,33 @@ function updateViewerMedia(src, type) {
     const viewer = document.getElementById('right-viewer');
     if (!viewer) return;
 
-    // Kiểm tra nếu media này đang chiếu rồi thì không nạp lại
     const currentMedia = viewer.querySelector('.viewer-layer:last-child');
-    if (currentMedia && currentMedia.src.includes(src)) return;
+    if (currentMedia && currentMedia.getAttribute('src') === src) return;
 
     const newMedia = document.createElement(type === 'video' ? 'video' : 'img');
     newMedia.src = src;
     newMedia.className = 'viewer-layer';
+
     if (type === 'video') {
-        newMedia.muted = true;
-        newMedia.loop = true;
-        newMedia.playsInline = true;
-        newMedia.play().catch(() => {});
+        newMedia.muted = true;       // Bắt buộc để tự động phát
+        newMedia.loop = true;        // Lặp lại liên tục
+        newMedia.playsInline = true; // Chạy trực tiếp trên trang
+        newMedia.setAttribute('muted', ''); 
+        newMedia.setAttribute('playsinline', '');
+        
+        // Buộc trình duyệt nạp lại dữ liệu mới
+        newMedia.load(); 
+        
+        // Xử lý lỗi play() để không hiện thông báo đỏ ở Console nữa
+        newMedia.play().catch(error => {
+            console.log("Vẫn chưa tìm thấy file hoặc định dạng sai:", error);
+        });
     }
 
     viewer.appendChild(newMedia);
     gsap.to(newMedia, { opacity: 1, duration: 0.5 });
 
-    // Xóa layer cũ
+    // Xóa layer cũ để giải phóng bộ nhớ
     const layers = viewer.querySelectorAll('.viewer-layer');
     if (layers.length > 1) {
         gsap.to(layers[0], { 
